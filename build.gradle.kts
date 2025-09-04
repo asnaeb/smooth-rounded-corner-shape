@@ -1,18 +1,20 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
-    kotlin("multiplatform") version "1.9.23"
-    id("org.jetbrains.compose") version "1.6.11"
-    id("com.android.library") version "8.2.0"
+    kotlin("multiplatform") version "2.2.10"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.10"
+    id("org.jetbrains.compose") version "1.8.2"
+    id("com.android.library") version "8.2.2"
 
     id("signing")
     id("com.vanniktech.maven.publish") version "0.29.0"
 }
 
 group = "io.github.iamcalledrob"
-version = "1.0.4"
+version = "1.0.5"
 
 repositories {
     mavenCentral()
@@ -24,23 +26,30 @@ kotlin {
 
     jvm()
     androidTarget()
+    iosArm64()
+    iosX64()
+    iosSimulatorArm64()
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs()
 
     applyDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain {
             dependencies {
-                implementation("androidx.graphics:graphics-shapes:1.0.1")
+                implementation("androidx.graphics:graphics-shapes:1.1.0-beta01")
                 implementation(compose.foundation)
             }
         }
 
-        // Leaving some hope that androidx.graphics:graphics-shape may eventually support
-        // non-desktop multiplatform targets too.
         val nonAndroidMain by creating {
             dependsOn(commonMain.get())
         }
+
         jvmMain.get().dependsOn(nonAndroidMain)
+        iosMain.get().dependsOn(nonAndroidMain)
+        wasmJsMain.get().dependsOn(nonAndroidMain)
     }
 }
 
