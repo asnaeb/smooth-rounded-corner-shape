@@ -34,7 +34,7 @@ repositories {
 Then add as a module dependency:
 ```kotlin
 dependencies {
-    implementation("com.github.iamcalledrob:smooth-rounded-corner-shape:1.0.4")
+    implementation("io.github.iamcalledrob:smooth-rounded-corner-shape:1.0.5")
 }
 ```
 

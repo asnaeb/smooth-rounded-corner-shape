@@ -1,16 +1,14 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     kotlin("multiplatform") version "2.2.10"
     id("org.jetbrains.kotlin.plugin.compose") version "2.2.10"
     id("org.jetbrains.compose") version "1.8.2"
-    id("com.android.library") version "8.2.2"
+    id("com.android.library") version "8.11.1"
 
-    id("signing")
-    id("com.vanniktech.maven.publish") version "0.29.0"
+    id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
 group = "io.github.iamcalledrob"
@@ -31,7 +29,10 @@ kotlin {
     iosSimulatorArm64()
 
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs()
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
 
     applyDefaultHierarchyTemplate()
 
@@ -55,21 +56,8 @@ kotlin {
 
 android {
     namespace = "io.github.iamcalledrob.smoothRoundedCornerShape"
-    compileSdk = 34
+    compileSdk = 36
 }
-
-
-
-// --- Signing + Publishing ---
-//
-// Make sure the following are accessible via gradle.properties.
-// If they are missing or invalid, expect cryptic and misleading errors.
-// Ideally in ~/.gradle/gradle.properties so it's not checked in to source control:
-// - signing.gnupg.keyId,
-// - signing.gnupg.password
-// - signing.gnupg.secretKeyRingFile
-// - mavenCentralUsername
-// - mavenCentralPassword
 
 val githubAccount = "iamcalledrob"
 val githubRepository = "smooth-rounded-corner-shape"
@@ -78,6 +66,10 @@ val email = "me@iamcalledrob.com"
 val projectDescription = "SmoothRoundedCornerShape"
 
 mavenPublishing {
+    publishToMavenCentral()
+
+    signAllPublications()
+
     coordinates(groupId = group.toString(), artifactId = githubRepository, version = version.toString())
 
     configure(
@@ -110,13 +102,4 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://git@github.com/$githubAccount/$githubRepository.git")
         }
     }
-
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
-}
-
-signing {
-    println("Signing...")
-    useGpgCmd()
-    sign(publishing.publications)
 }
