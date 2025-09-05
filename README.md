@@ -57,5 +57,4 @@ Path.smoothRoundedRectangle(smoothing = 0.6f, size = Size(100f, 50f), topLeft = 
 
 
 ## Notes
-Currently only builds desktop (jvm) and android targets, since androidx.graphics.shapes only supports those targets.
-Feel free to make a PR for other platforms if they become supported.
+All multiplatform targets are supported.
